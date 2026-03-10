@@ -122,13 +122,14 @@ body {
 
 .weather-details {
   text-align: center;
+  height: 420px;
 }
 
 .weather {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .weather-icon {
@@ -199,7 +200,7 @@ body {
   border-radius: 6px;
 }
 
-@media (max-width: 900px) {
+/* @media (max-width: 900px) {
   .container {
     flex-direction: column;
   }
@@ -226,4 +227,4 @@ body {
     flex-direction: row;
     gap: 2rem;
   }
-}
+} */

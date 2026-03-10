@@ -14,7 +14,12 @@
       <h1>Smart Travel Planner ✈️</h1>
 
       <div class="search">
-        <input id="search-input" type="text" placeholder="Enter a city..." />
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Enter a city..."
+          autocomplete="off"
+        />
         <button id="search-btn">Search</button>
         <div id="suggestions"></div>
       </div>
@@ -62,13 +67,12 @@
       <div class="right">
         <div class="weather-details">
           <h2 class="city-name"></h2>
-
           <div class="weather">
             <img class="weather-icon" src="" alt="weather icon" />
             <span class="temp"></span>
-            <p class="description"></p>
-            <p class="humidity"></p>
-            <p class="wind"></p>
+            <span class="description"></span>
+            <span class="humidity"></span>
+            <span class="wind"></span>
           </div>
         </div>
 

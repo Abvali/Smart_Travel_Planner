@@ -74,7 +74,7 @@ export async function searchCity(city) {
 
     getWeather(lat, lon);
 
-    L.marker([lat, lon]).addTo(map);
+    L.marker([lat, lon], { icon: defaultIcon }).addTo(map);
 
     getAttractions(lat, lon);
   } catch (err) {
@@ -171,13 +171,13 @@ function updateWeatherUI(weather) {
   el(".temp").textContent = `${weather.temp}°C`;
 
   // description
-  el(".description").textContent = weather.description;
+  el(".description").textContent = `☁️ ${weather.description}`;
 
   // humidity
-  el(".humidity").textContent = `humidity ${weather.humidity}%`;
+  el(".humidity").textContent = `💧 humidity ${weather.humidity}%`;
 
   // wind
-  el(".wind").textContent = `🌬 Wind ${weather.wind} km/h`;
+  el(".wind").textContent = `💨 Wind ${weather.wind} km/h`;
 
   // weather icon
   el(".weather-icon").src =
