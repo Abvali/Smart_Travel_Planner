@@ -168,23 +168,22 @@ function updateWeatherUI(weather) {
     `${flag} ${weather.city}, ${weather.country}`;
 
   // temperature
-  document.querySelector(".temp").textContent = `${weather.temp}°C`;
+  el(".temp").textContent = `${weather.temp}°C`;
 
   // description
-  document.querySelector(".description").textContent = weather.description;
+  el(".description").textContent = weather.description;
 
   // humidity
-  document.querySelector(".humidity").textContent =
-    `humidity ${weather.humidity}%`;
+  el(".humidity").textContent = `humidity ${weather.humidity}%`;
 
   // wind
-  document.querySelector(".wind").textContent = `🌬 Wind ${weather.wind} km/h`;
+  el(".wind").textContent = `🌬 Wind ${weather.wind} km/h`;
 
   // weather icon
-  document.querySelector(".weather-icon").src =
+  el(".weather-icon").src =
     `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
 
-  changeWeatherBackground(weather.description);
+  //   changeWeatherBackground(weather.description);
 }
 
 function getFlagEmoji(countryCode) {
