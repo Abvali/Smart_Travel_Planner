@@ -1,4 +1,5 @@
 import "../leaflet/leaflet.js";
+import { el } from "./lib.js";
 
 let map;
 
@@ -27,15 +28,16 @@ const defaultIcon = L.icon({
   iconAnchor: [16, 32],
 });
 
-// API KEY
+// API KEYS
 const API_KEY = "618da3fb696e4cc89e1440c269d6577d";
+const WEATHER_KEY = "d3b3106d76b06f32427ed094c9d586f7";
 
 // Layer für Attraktionen
 const attractionsLayer = L.layerGroup();
 
 // MAP INITIALISIEREN
 export function showMap() {
-  map = L.map("map").setView([51.505, -0.09], 8);
+  map = L.map("map").setView([48.8566, 2.3522], 10);
 
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
@@ -43,6 +45,9 @@ export function showMap() {
   }).addTo(map);
 
   attractionsLayer.addTo(map);
+
+  // default weather: Paris
+  getWeather(48.8566, 2.3522);
 }
 
 // STADT SUCHEN
@@ -62,9 +67,14 @@ export async function searchCity(city) {
     const lat = Number(data[0].lat);
     const lon = Number(data[0].lon);
 
-    map.setView([lat, lon], 13);
+    map.flyTo([lat, lon], 12, {
+      animate: true,
+      duration: 3,
+    });
 
-    L.marker([lat, lon]).addTo(map).bindPopup(city).openPopup();
+    getWeather(lat, lon);
+
+    L.marker([lat, lon]).addTo(map);
 
     getAttractions(lat, lon);
   } catch (err) {
@@ -120,3 +130,85 @@ async function getAttractions(lat, lon) {
     console.error("Netzwerkfehler:", err);
   }
 }
+
+// Wetterbericht zeigen
+async function getWeather(lat, lon) {
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+  //   console.log(data);
+
+  const city = data.name;
+  const country = data.sys.country;
+
+  const temp = Math.round(data.main.temp);
+  const humidity = data.main.humidity;
+  const wind = data.wind.speed;
+  const description = data.weather[0].description;
+  const icon = data.weather[0].icon;
+
+  updateWeatherUI({
+    city,
+    country,
+    temp,
+    humidity,
+    wind,
+    description,
+    icon,
+  });
+}
+
+// update html elemente
+function updateWeatherUI(weather) {
+  // city + flag
+  const flag = getFlagEmoji(weather.country);
+
+  document.querySelector(".city-name").textContent =
+    `${flag} ${weather.city}, ${weather.country}`;
+
+  // temperature
+  document.querySelector(".temp").textContent = `${weather.temp}°C`;
+
+  // description
+  document.querySelector(".description").textContent = weather.description;
+
+  // humidity
+  document.querySelector(".humidity").textContent =
+    `humidity ${weather.humidity}%`;
+
+  // wind
+  document.querySelector(".wind").textContent = `🌬 Wind ${weather.wind} km/h`;
+
+  // weather icon
+  document.querySelector(".weather-icon").src =
+    `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
+
+  changeWeatherBackground(weather.description);
+}
+
+function getFlagEmoji(countryCode) {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt());
+
+  return String.fromCodePoint(...codePoints);
+}
+
+// Backgraund ändern (nicht sicher)
+// function changeWeatherBackground(description) {
+//   const body = document.body;
+
+//   if (description.includes("rain")) {
+//     body.style.background = "linear-gradient(#4e54c8,#8f94fb)";
+//   } else if (description.includes("cloud")) {
+//     body.style.background = "linear-gradient(#bdc3c7,#2c3e50)";
+//   } else if (description.includes("clear")) {
+//     body.style.background = "linear-gradient(#fceabb,#f8b500)";
+//   } else if (description.includes("snow")) {
+//     body.style.background = "linear-gradient(#e6dada,#274046)";
+//   } else {
+//     body.style.background = "#2c3e50";
+//   }
+// }
