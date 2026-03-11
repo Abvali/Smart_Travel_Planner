@@ -1,5 +1,5 @@
 import "../leaflet/leaflet.js";
-import { el } from "./lib.js";
+import { el, create } from "./lib.js";
 
 let map;
 
@@ -182,8 +182,6 @@ function updateWeatherUI(weather) {
   // weather icon
   el(".weather-icon").src =
     `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
-
-  //   changeWeatherBackground(weather.description);
 }
 
 function getFlagEmoji(countryCode) {
@@ -195,19 +193,30 @@ function getFlagEmoji(countryCode) {
   return String.fromCodePoint(...codePoints);
 }
 
-// Backgraund ändern (nicht sicher)
-// function changeWeatherBackground(description) {
-//   const body = document.body;
+//create To-Do List
+export const toDoList = () => {
+  const input = el("#todo-input");
+  const todo = input.value;
+  if (!todo.trim()) return;
 
-//   if (description.includes("rain")) {
-//     body.style.background = "linear-gradient(#4e54c8,#8f94fb)";
-//   } else if (description.includes("cloud")) {
-//     body.style.background = "linear-gradient(#bdc3c7,#2c3e50)";
-//   } else if (description.includes("clear")) {
-//     body.style.background = "linear-gradient(#fceabb,#f8b500)";
-//   } else if (description.includes("snow")) {
-//     body.style.background = "linear-gradient(#e6dada,#274046)";
-//   } else {
-//     body.style.background = "#2c3e50";
-//   }
-// }
+  const li = create("li");
+
+  const text = create("span");
+  text.innerText = todo;
+
+  const checkBtn = create("input");
+  checkBtn.type = "checkbox";
+
+  const editBtn = create("button");
+  editBtn.innerText = "✏️";
+
+  const deleteBtn = create("button");
+  deleteBtn.innerText = "🗑";
+
+  const actions = create("div");
+  actions.append(checkBtn, editBtn, deleteBtn);
+
+  li.append(text, actions);
+
+  el("#todo-List").append(li);
+};

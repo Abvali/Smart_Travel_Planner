@@ -1,7 +1,8 @@
-import { searchCity, showMap } from "../module/main.js";
+import { searchCity, showMap, toDoList } from "../module/main.js";
 import { el } from "../module/lib.js";
 
 showMap();
+el("#todo-btn").addEventListener("click", toDoList);
 
 const input = el("#search-input");
 const suggestions = el("#suggestions");

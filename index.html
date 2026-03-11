@@ -37,21 +37,45 @@
             <h3>Trip To-Do List</h3>
 
             <div class="todo-input">
-              <input type="text" placeholder="Add a new task..." />
-              <button>Add</button>
+              <input
+                id="todo-input"
+                type="text"
+                placeholder="Add a new task..."
+                autocomplete="off"
+              />
+              <button id="todo-btn">Add</button>
             </div>
 
             <ul id="todo-List">
-              <li>✔ Book flight tickets 🗑</li>
-              <li>✔ Reserve hotel 🗑</li>
-              <li>✔ Pack travel guide 🗑</li>
-              <li>✔ Try croissants 🗑</li>
+              <li>
+                <span>Book flight tickets</span>
+                <div>
+                  <input type="checkbox" />
+                  <button>✏️</button>
+                  <button>🗑</button>
+                </div>
+              </li>
+              <li>
+                <span>Reserve hotel </span>
+                <div>
+                  <input type="checkbox" />
+                  <button>✏️</button>
+                  <button>🗑</button>
+                </div>
+              </li>
+              <li>
+                <span>Pack travel guide</span>
+                <div>
+                  <input type="checkbox" />
+                  <button>✏️</button>
+                  <button>🗑</button>
+                </div>
+              </li>
             </ul>
           </div>
 
           <div class="card">
             <h3>Travel Packing Checklist</h3>
-
             <ul>
               <li>☑ Passport</li>
               <li>☑ Camera</li>

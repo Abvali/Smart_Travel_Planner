@@ -9,7 +9,7 @@ body {
 }
 
 .header {
-  background: linear-gradient(135deg, #3b6edc, #5a8dee);
+  background: linear-gradient(135deg, #2fb3a2, #5a8dee);
   color: white;
   text-align: center;
   padding: 25px;
@@ -30,7 +30,7 @@ body {
 
 .search input {
   padding: 10px 14px;
-  width: 250px;
+  width: 350px;
   border-radius: 8px;
   border: none;
   outline: none;
@@ -172,13 +172,36 @@ body {
   margin-bottom: 10px;
 }
 
-.todo-input input {
-  flex: 1;
-  padding: 8px;
+#todo-input {
+  /* flex: 1; */
+  padding: 4px;
+  border-radius: 5px;
+  outline: none;
+
+  border-color: rgb(232, 224, 224);
 }
 
-.todo-input button {
+#todo-btn {
   padding: 8px 12px;
+  margin: 0;
+}
+
+#todo-List li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#todo-List li div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#todo-List li button {
+  background-color: white;
+  margin: 0;
+  padding: 3px;
 }
 
 .card ul {
@@ -194,10 +217,15 @@ body {
 .card button {
   margin-top: 10px;
   padding: 8px 12px;
-  background: #3b6edc;
+  background: #1fb3ac;
   color: white;
   border: none;
   border-radius: 6px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background: #0d847e;
 }
 
 /* @media (max-width: 900px) {
