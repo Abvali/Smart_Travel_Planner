@@ -136,55 +136,67 @@ async function getAttractions(lat, lon) {
 
 // Wetterbericht zeigen
 async function getWeather(lat, lon) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_KEY}`;
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_KEY}`;
 
-  const res = await fetch(url);
-  const data = await res.json();
-  //   console.log(data);
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
 
-  const city = data.name;
-  const country = data.sys.country;
+    const city = data.city.name;
+    const country = data.city.country;
 
-  const temp = Math.round(data.main.temp);
-  const humidity = data.main.humidity;
-  const wind = data.wind.speed;
-  const description = data.weather[0].description;
-  const icon = data.weather[0].icon;
+    const forecast = getDailyForecast(data.list);
 
-  updateWeatherUI({
-    city,
-    country,
-    temp,
-    humidity,
-    wind,
-    description,
-    icon,
+    updateWeatherUI({ city, country, forecast });
+  } catch (error) {
+    console.error("Weather API error:", error);
+  }
+}
+
+function getDailyForecast(list) {
+  return list
+    .filter((item) => item.dt_txt.includes("12:00:00"))
+    .slice(0, 5)
+    .map((item) => ({
+      date: item.dt_txt,
+      temp: Math.round(item.main.temp),
+      icon: item.weather[0].icon,
+    }));
+}
+
+function getDayName(dateString) {
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
   });
 }
 
 // update html elemente
-function updateWeatherUI(weather) {
-  // city + flag
-  const flag = getFlagEmoji(weather.country);
+function updateWeatherUI(data) {
+  const flag = getFlagEmoji(data.country);
 
-  document.querySelector(".city-name").textContent =
-    `${flag} ${weather.city}, ${weather.country}`;
+  el("#city").textContent = `${flag} ${data.city}, ${data.country}`;
 
-  // temperature
-  el(".temp").textContent = `${weather.temp}°C`;
+  const container = el("#forecast");
+  container.innerHTML = "";
 
-  // description
-  el(".description").textContent = `☁️ ${weather.description}`;
+  data.forecast.forEach((day) => {
+    const div = document.createElement("div");
+    div.className = "info";
 
-  // humidity
-  el(".humidity").textContent = `💧 humidity ${weather.humidity}%`;
+    div.innerHTML = `
+      <img src="${getIcon(day.icon)}">
+      <h3>${day.temp}°C</h3>
+    <p>${getDayName(day.date)}</p>
+    `;
 
-  // wind
-  el(".wind").textContent = `💨 Wind ${weather.wind} km/h`;
+    container.append(div);
+  });
+}
 
-  // weather icon
-  el(".weather-icon").src =
-    `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
+function getIcon(icon) {
+  return `https://openweathermap.org/img/wn/${icon}@2x.png`;
 }
 
 function getFlagEmoji(countryCode) {

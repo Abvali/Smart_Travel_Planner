@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
     <script type="module" src="js/app.js"></script>
     <title>Smart Travel Planner</title>
   </head>
@@ -30,6 +31,20 @@
       <div class="left">
         <div class="city-card">
           <div id="map"></div>
+
+          <div class="weather-card">
+            <div class="weather-info">
+              <div class="info location">
+                <h3 id="city">Paris, France</h3>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="info">
+                <div id="forecast" class="forecast"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="cards">
@@ -60,7 +75,7 @@
 
       <!-- RIGHT SIDE -->
       <div class="right">
-        <div class="weather-details">
+        <!-- <div class="weather-details">
           <h2 class="city-name"></h2>
           <div class="weather">
             <img class="weather-icon" src="" alt="weather icon" />
@@ -69,7 +84,7 @@
             <span class="humidity"></span>
             <span class="wind"></span>
           </div>
-        </div>
+        </div> -->
 
         <div class="card">
           <h3>Trip Summary</h3>
