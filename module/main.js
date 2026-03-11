@@ -1,6 +1,6 @@
 import "../leaflet/leaflet.js";
 import { el, create } from "./lib.js";
-import { todos } from "../data/todos.js";
+import { checklists, todos } from "../data/db.js";
 
 let map;
 let editing = false;
@@ -258,15 +258,22 @@ function createTodoItem(todoObj) {
   return li;
 }
 
-// initial render
+// initial render Todo-Liste
 export const renderTodos = () => {
   const list = el("#todo-List");
   list.innerHTML = "";
+
+  //   const deleteAllBtn = create("button");
+  //   deleteAllBtn.innerText = "Delete All";
+  //   deleteAllBtn.addEventListener("click", () => {
+  //     list.innerHTML = "";
+  //   });
 
   todos.forEach((todo) => {
     const li = createTodoItem(todo);
     list.append(li);
   });
+  //   list.append(deleteAllBtn);
 };
 // add new todo-item
 export const addTodo = () => {
@@ -287,4 +294,30 @@ export const addTodo = () => {
 
   input.value = "";
 };
-// done todo-Items
+
+// create checklist
+function createChecklistItem(cheklistObj) {
+  const li = create("li");
+  const text = create("span");
+  text.innerText = cheklistObj.checklist;
+
+  const checkBtn = create("input");
+  checkBtn.type = "checkbox";
+  checkBtn.addEventListener("change", () => {
+    text.classList.toggle("completed");
+  });
+
+  li.append(text, checkBtn);
+  el("#packing-List").append(li);
+}
+
+// initial render Cheklist
+export const renderChecklist = () => {
+  const list = el("#packing-List");
+  list.innerHTML = "";
+
+  checklists.forEach((checklist) => {
+    const li = createChecklistItem(checklist);
+    // list.append(li);
+  });
+};

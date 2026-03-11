@@ -1,8 +1,16 @@
-import { addTodo, renderTodos, searchCity, showMap } from "../module/main.js";
+import {
+  addTodo,
+  renderChecklist,
+  renderTodos,
+  searchCity,
+  showMap,
+} from "../module/main.js";
 import { el } from "../module/lib.js";
 
 showMap();
 renderTodos();
+renderChecklist();
+
 el("#todo-btn").addEventListener("click", addTodo);
 
 const input = el("#search-input");
