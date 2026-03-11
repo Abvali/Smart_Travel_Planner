@@ -168,11 +168,12 @@ async function showAttractionDetails(place) {
   const info = document.createElement("div");
   info.className = "place-info";
 
-  const title = document.createElement("h2");
+  const title = document.createElement("h3");
   title.textContent = name;
 
   const addressEl = document.createElement("p");
   addressEl.textContent = `📍 ${address}`;
+  addressEl.className = "title";
 
   const desc = document.createElement("p");
   desc.textContent = wiki.description;
