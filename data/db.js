@@ -9,3 +9,11 @@ export const checklists = [
   { id: "2", checklist: "Camera" },
   { id: "3", checklist: "Phone Charger" },
 ];
+
+export const defaultPlace = {
+  properties: {
+    name: "Persepolis",
+    formatted: "Marvdasht, Fars Province",
+    city: "Iran",
+  },
+};

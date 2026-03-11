@@ -105,6 +105,9 @@ body {
   transition: 0.25s;
 }
 
+.card {
+  width: 100%;
+}
 /* #weather-details {
   background-color: red;
   display: flex;
@@ -189,6 +192,47 @@ body {
 .info img {
   width: 60px;
   height: 60px;
+}
+
+#attraction-details {
+  width: 300px;
+  min-height: 540px;
+}
+
+.details {
+  width: 300px;
+}
+
+.place-card {
+  background: white;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.place-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.place-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #760505;
+  margin-bottom: 14px;
+  text-align: justify;
+  padding: 5px;
+}
+
+a {
+  text-decoration: none;
+  font-size: 12px;
+  color: #1a73e8;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 /* BOTTOM CARDS */
@@ -279,7 +323,7 @@ body {
   background: #0d847e;
 }
 
-/* @media (max-width: 900px) {
+@media (max-width: 900px) {
   .container {
     flex-direction: column;
   }
@@ -306,4 +350,4 @@ body {
     flex-direction: row;
     gap: 2rem;
   }
-} */
+}

@@ -1,10 +1,15 @@
 import "../leaflet/leaflet.js";
 import { el, create } from "./lib.js";
-import { checklists, todos } from "../data/db.js";
+import { checklists, todos, defaultPlace } from "../data/db.js";
 
 let map;
 let editing = false;
 let input; //edit input
+const wikiCache = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  showAttractionDetails(defaultPlace);
+});
 
 // ICONS
 const museumIcon = L.icon({
@@ -94,8 +99,7 @@ async function getAttractions(lat, lon) {
   }
   const radius = 5000; // 5km
 
-  const categories = "building.historic,leisure.park,entertainment";
-  // Achte auf das Format: filter=circle:longitude,latitude,radius
+  const categories = "building.historic,leisure.park,tourism.sights";
   const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lon},${lat},${radius}&limit=20&apiKey=${API_KEY}`;
   console.log(url);
 
@@ -119,7 +123,7 @@ async function getAttractions(lat, lon) {
 
       let icon = defaultIcon;
 
-      if (categories.some((c) => c.includes("museum"))) {
+      if (categories.some((c) => c.includes("tourism.sights"))) {
         icon = museumIcon;
       } else if (categories.some((c) => c.includes("park"))) {
         icon = parkIcon;
@@ -127,10 +131,94 @@ async function getAttractions(lat, lon) {
         icon = monumentIcon;
       }
 
-      L.marker([pLat, pLon], { icon }).addTo(attractionsLayer).bindPopup(name);
+      const marker = L.marker([pLat, pLon], { icon })
+        .addTo(attractionsLayer)
+        .bindPopup(name);
+
+      marker.on("click", () => {
+        showAttractionDetails(place);
+      });
     });
   } catch (err) {
     console.error("Netzwerkfehler:", err);
+  }
+}
+
+// die Sehenwürdigkeitensinfos zeigen
+async function showAttractionDetails(place) {
+  const details = el("#attraction-details");
+
+  const name = place.properties.name || "Unknown place";
+  const address = place.properties.formatted || "";
+  const city = place.properties.city || "";
+
+  const wiki = await getWikipediaInfo(name);
+
+  const photo = wiki.image || "https://picsum.photos/600/400";
+
+  details.innerHTML = "";
+
+  const card = document.createElement("div");
+  card.className = "place-card";
+
+  const img = document.createElement("img");
+  img.src = photo;
+  img.className = "place-img";
+
+  const info = document.createElement("div");
+  info.className = "place-info";
+
+  const title = document.createElement("h2");
+  title.textContent = name;
+
+  const addressEl = document.createElement("p");
+  addressEl.textContent = `📍 ${address}`;
+
+  const desc = document.createElement("p");
+  desc.textContent = wiki.description;
+  desc.className = "place-description";
+
+  info.append(title, addressEl, desc);
+
+  if (wiki.wikiLink) {
+    const link = document.createElement("a");
+    link.href = wiki.wikiLink;
+    link.target = "_blank";
+    link.textContent = "Read more on Wikipedia";
+    info.append(link);
+  }
+
+  card.append(img, info);
+  details.append(card);
+}
+
+// Infos der Plätze
+async function getWikipediaInfo(placeName) {
+  if (wikiCache[placeName]) {
+    return wikiCache[placeName];
+  }
+
+  try {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+      placeName,
+    )}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const result = {
+      description: data.extract || "",
+      image: data.thumbnail?.source || null,
+      wikiLink: data.content_urls?.desktop?.page || "",
+    };
+
+    // ذخیره در cache
+    wikiCache[placeName] = result;
+
+    return result;
+  } catch (error) {
+    console.error("Wikipedia error:", error);
+    return {};
   }
 }
 
