@@ -186,7 +186,8 @@ body {
   margin: 0;
 }
 
-#todo-List li {
+#todo-List li,
+#packing-List li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -196,6 +197,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: red;
 }
 
 #todo-List li button {

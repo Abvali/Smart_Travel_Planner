@@ -1,7 +1,10 @@
 import "../leaflet/leaflet.js";
 import { el, create } from "./lib.js";
+import { todos } from "../data/todos.js";
 
 let map;
+let editing = false;
+let input; //edit input
 
 // ICONS
 const museumIcon = L.icon({
@@ -29,8 +32,8 @@ const defaultIcon = L.icon({
 });
 
 // API KEYS
-const API_KEY = "618da3fb696e4cc89e1440c269d6577d";
-const WEATHER_KEY = "d3b3106d76b06f32427ed094c9d586f7";
+const API_KEY = "618da3fb696e4cc89e1440c269d6577d"; // Sehenwürdigkeiten
+const WEATHER_KEY = "d3b3106d76b06f32427ed094c9d586f7"; // weater
 
 // Layer für Attraktionen
 const attractionsLayer = L.layerGroup();
@@ -193,30 +196,95 @@ function getFlagEmoji(countryCode) {
   return String.fromCodePoint(...codePoints);
 }
 
-//create To-Do List
-export const toDoList = () => {
-  const input = el("#todo-input");
-  const todo = input.value;
-  if (!todo.trim()) return;
-
+//create new To-Do
+function createTodoItem(todoObj) {
   const li = create("li");
 
   const text = create("span");
-  text.innerText = todo;
+  text.innerText = todoObj.todo;
 
   const checkBtn = create("input");
   checkBtn.type = "checkbox";
 
+  checkBtn.addEventListener("change", () => {
+    text.classList.toggle("completed");
+  });
+
   const editBtn = create("button");
   editBtn.innerText = "✏️";
 
+  editBtn.addEventListener("click", () => {
+    if (!editing) {
+      // start editing
+      input = create("input");
+      input.type = "text";
+      input.value = text.innerText;
+
+      li.replaceChild(input, text);
+
+      editBtn.innerText = "💾";
+      input.focus();
+
+      editing = true;
+    } else {
+      // save
+      const newValue = input.value.trim();
+
+      if (newValue) {
+        text.innerText = newValue;
+        todoObj.todo = newValue;
+      }
+
+      li.replaceChild(text, input);
+
+      editBtn.innerText = "✏️";
+
+      editing = false;
+    }
+  });
+
   const deleteBtn = create("button");
   deleteBtn.innerText = "🗑";
+
+  deleteBtn.addEventListener("click", () => {
+    li.remove();
+  });
 
   const actions = create("div");
   actions.append(checkBtn, editBtn, deleteBtn);
 
   li.append(text, actions);
 
-  el("#todo-List").append(li);
+  return li;
+}
+
+// initial render
+export const renderTodos = () => {
+  const list = el("#todo-List");
+  list.innerHTML = "";
+
+  todos.forEach((todo) => {
+    const li = createTodoItem(todo);
+    list.append(li);
+  });
 };
+// add new todo-item
+export const addTodo = () => {
+  const input = el("#todo-input");
+  const name = input.value;
+
+  if (!name.trim()) return;
+
+  const newTodo = {
+    id: Date.now().toString(),
+    todo: name,
+  };
+
+  todos.push(newTodo);
+
+  const li = createTodoItem(newTodo);
+  el("#todo-List").append(li);
+
+  input.value = "";
+};
+// done todo-Items
