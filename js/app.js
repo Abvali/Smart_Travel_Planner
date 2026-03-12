@@ -1,5 +1,6 @@
 import {
   addTodo,
+  loadTodos,
   renderChecklist,
   renderTodos,
   searchCity,
@@ -8,6 +9,7 @@ import {
 import { el } from "../module/lib.js";
 
 showMap();
+// loadTodos();
 renderTodos();
 renderChecklist();
 

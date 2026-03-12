@@ -1,6 +1,7 @@
 import "../leaflet/leaflet.js";
 import { el, create } from "./lib.js";
 import { checklists, todos, defaultPlace } from "../data/db.js";
+import { get, set } from "./idb.js";
 
 let map;
 let editing = false;
@@ -213,7 +214,7 @@ async function getWikipediaInfo(placeName) {
       wikiLink: data.content_urls?.desktop?.page || "",
     };
 
-    // ذخیره در cache
+    // in Cache speichern
     wikiCache[placeName] = result;
 
     return result;
@@ -306,9 +307,16 @@ function createTodoItem(todoObj) {
 
   const checkBtn = create("input");
   checkBtn.type = "checkbox";
+  checkBtn.checked = todoObj.completed || false;
 
-  checkBtn.addEventListener("change", () => {
+  if (todoObj.completed) {
+    text.classList.add("completed");
+  }
+
+  checkBtn.addEventListener("change", async () => {
     text.classList.toggle("completed");
+    todoObj.completed = checkBtn.checked;
+    await saveTodos();
   });
 
   const editBtn = create("button");
@@ -334,12 +342,11 @@ function createTodoItem(todoObj) {
       if (newValue) {
         text.innerText = newValue;
         todoObj.todo = newValue;
+        saveTodos();
       }
 
       li.replaceChild(text, input);
-
       editBtn.innerText = "✏️";
-
       editing = false;
     }
   });
@@ -347,8 +354,12 @@ function createTodoItem(todoObj) {
   const deleteBtn = create("button");
   deleteBtn.innerText = "🗑";
 
-  deleteBtn.addEventListener("click", () => {
+  deleteBtn.addEventListener("click", async () => {
     li.remove();
+    const index = todos.findIndex((todo) => todo.id === todoObj.id);
+    todos.splice(index, 1);
+
+    await saveTodos();
   });
 
   const actions = create("div");
@@ -364,20 +375,14 @@ export const renderTodos = () => {
   const list = el("#todo-List");
   list.innerHTML = "";
 
-  //   const deleteAllBtn = create("button");
-  //   deleteAllBtn.innerText = "Delete All";
-  //   deleteAllBtn.addEventListener("click", () => {
-  //     list.innerHTML = "";
-  //   });
-
   todos.forEach((todo) => {
     const li = createTodoItem(todo);
     list.append(li);
   });
-  //   list.append(deleteAllBtn);
 };
+
 // add new todo-item
-export const addTodo = () => {
+export const addTodo = async () => {
   const input = el("#todo-input");
   const name = input.value;
 
@@ -392,6 +397,8 @@ export const addTodo = () => {
 
   const li = createTodoItem(newTodo);
   el("#todo-List").append(li);
+
+  await saveTodos(); //speichen
 
   input.value = "";
 };
@@ -409,7 +416,7 @@ function createChecklistItem(cheklistObj) {
   });
 
   li.append(text, checkBtn);
-  el("#packing-List").append(li);
+  return li;
 }
 
 // initial render Cheklist
@@ -419,6 +426,23 @@ export const renderChecklist = () => {
 
   checklists.forEach((checklist) => {
     const li = createChecklistItem(checklist);
-    // list.append(li);
+    list.append(li);
   });
 };
+
+// die Daten laden
+export const loadTodos = async () => {
+  const storedTodos = await get("todos");
+
+  if (storedTodos) {
+    todos.length = 0;
+    todos.push(...storedTodos);
+  }
+
+  renderTodos();
+};
+
+// die Daten speichern
+async function saveTodos() {
+  await set("todos", todos);
+}

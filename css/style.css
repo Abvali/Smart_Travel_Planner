@@ -8,8 +8,6 @@ body {
   margin: 0;
 }
 
-/* HEADER */
-
 .header {
   background: linear-gradient(135deg, #2fb3a2, #5a8dee);
   color: white;
@@ -22,8 +20,6 @@ body {
   margin: 0;
   font-size: 26px;
 }
-
-/* SEARCH */
 
 .search {
   margin-top: 15px;
@@ -56,7 +52,6 @@ body {
 }
 
 /* AUTOCOMPLETE */
-
 #suggestions {
   position: absolute;
   top: 100%;
@@ -83,7 +78,6 @@ body {
 }
 
 /* MAIN LAYOUT */
-
 .container {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -105,8 +99,6 @@ body {
   gap: 20px;
 }
 
-/* CARDS */
-
 .card,
 .city-card {
   background: white;
@@ -116,7 +108,6 @@ body {
 }
 
 /* MAP CARD */
-
 .city-card {
   padding: 0;
   overflow: hidden;
@@ -126,8 +117,6 @@ body {
   width: 100%;
   height: 300px;
 }
-
-/* WEATHER */
 
 .weather-card {
   padding: 15px;
@@ -162,8 +151,6 @@ body {
   display: flex;
   gap: 15px;
 }
-
-/* ATTRACTION DETAILS */
 
 #attraction-details {
   /* width: 100%; */
@@ -219,8 +206,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* BOTTOM CARDS */
-
 .cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -230,8 +215,6 @@ a:hover {
 .card h3 {
   margin-top: 0;
 }
-
-/* TODO */
 
 .todo-input {
   display: flex;
@@ -274,8 +257,6 @@ a:hover {
   padding: 3px;
 }
 
-/* LISTS */
-
 .card ul {
   list-style: none;
   padding: 0;
@@ -285,8 +266,6 @@ a:hover {
   padding: 6px 0;
   border-bottom: 1px solid #eee;
 }
-
-/* BUTTONS */
 
 .card button {
   margin-top: 10px;
@@ -302,9 +281,7 @@ a:hover {
   background: #0d847e;
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 900px) {
+@media (width<= 900px) {
   .container {
     grid-template-columns: 1fr;
   }
