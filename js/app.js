@@ -1,19 +1,23 @@
 import {
   addTodo,
+  loadChecklist,
   loadTodos,
   renderChecklist,
   renderTodos,
   searchCity,
+  showChecklistInput,
   showMap,
 } from "../module/main.js";
 import { el } from "../module/lib.js";
 
 showMap();
-// loadTodos();
+loadTodos();
+loadChecklist();
 renderTodos();
 renderChecklist();
 
 el("#todo-btn").addEventListener("click", addTodo);
+el("#add-item-btn").addEventListener("click", showChecklistInput);
 
 const input = el("#search-input");
 const suggestions = el("#suggestions");

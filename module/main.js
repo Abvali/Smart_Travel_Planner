@@ -406,18 +406,88 @@ export const addTodo = async () => {
 // create checklist
 function createChecklistItem(cheklistObj) {
   const li = create("li");
+
   const text = create("span");
   text.innerText = cheklistObj.checklist;
 
   const checkBtn = create("input");
   checkBtn.type = "checkbox";
-  checkBtn.addEventListener("change", () => {
+
+  // gespeicherten Status setzen
+  checkBtn.checked = cheklistObj.completed || false;
+
+  if (cheklistObj.completed) {
+    text.classList.add("completed");
+  }
+
+  checkBtn.addEventListener("change", async () => {
     text.classList.toggle("completed");
+
+    cheklistObj.completed = checkBtn.checked;
+
+    await saveChecklists();
   });
 
-  li.append(text, checkBtn);
+  const deleteBtn = create("button");
+  deleteBtn.innerText = "✗";
+  deleteBtn.className = "delete-btn";
+
+  deleteBtn.addEventListener("click", async () => {
+    li.remove();
+    const index = checklists.findIndex(
+      (checklist) => checklist.id === cheklistObj.id,
+    );
+    checklists.splice(index, 1);
+    await saveChecklists();
+  });
+
+  const actions = create("div");
+  actions.append(checkBtn, deleteBtn);
+
+  li.append(text, actions);
   return li;
 }
+
+// input für packing-checklist
+export const showChecklistInput = () => {
+  const list = el("#packing-List");
+
+  // prüfen ob schon eine Input existiert
+  if (el(".new-checklist-input")) return;
+
+  el("#add-item-btn").disabled = true;
+
+  const li = create("li");
+
+  const input = create("input");
+  input.type = "text";
+  input.classList.add("new-checklist-input");
+
+  const saveBtn = create("button");
+  saveBtn.innerText = "Add";
+
+  saveBtn.addEventListener("click", () => {
+    const value = input.value.trim();
+
+    if (!value) return;
+
+    const newItem = {
+      id: Date.now().toString(),
+      checklist: value,
+    };
+
+    checklists.push(newItem);
+
+    renderChecklist();
+
+    el("#add-item-btn").disabled = false;
+  });
+
+  li.append(input, saveBtn);
+  list.append(li);
+
+  input.focus();
+};
 
 // initial render Cheklist
 export const renderChecklist = () => {
@@ -427,6 +497,7 @@ export const renderChecklist = () => {
   checklists.forEach((checklist) => {
     const li = createChecklistItem(checklist);
     list.append(li);
+    saveChecklists();
   });
 };
 
@@ -442,7 +513,21 @@ export const loadTodos = async () => {
   renderTodos();
 };
 
+export const loadChecklist = async () => {
+  const storedChecklists = await get("checklists");
+
+  if (storedChecklists) {
+    checklists.length = 0;
+    checklists.push(...storedChecklists);
+  }
+  renderChecklist();
+};
+
 // die Daten speichern
 async function saveTodos() {
   await set("todos", todos);
+}
+
+async function saveChecklists() {
+  await set("checklists", checklists);
 }

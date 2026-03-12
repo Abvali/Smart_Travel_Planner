@@ -218,20 +218,25 @@ a:hover {
 
 .todo-input {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-#todo-input {
+#todo-input,
+#packing-List input {
   flex: 1;
-  padding: 8px;
+  padding: 6px;
   border-radius: 6px;
   outline: none;
   border: 1px solid #ddd;
 }
 
-#todo-btn {
-  padding: 8px 12px;
+#todo-btn,
+#packing-List button {
+  padding: 6px 12px;
+  margin: 0;
 }
 
 #todo-List li,
@@ -241,9 +246,11 @@ a:hover {
   align-items: center;
 }
 
-#todo-List li div {
+#todo-List li div,
+#packing-List li div {
   display: flex;
   align-items: center;
+  gap: 3px;
 }
 
 .completed {
@@ -255,6 +262,12 @@ a:hover {
   background-color: white;
   margin: 0;
   padding: 3px;
+}
+
+#packing-List .delete-btn {
+  color: red;
+  font-size: 20px;
+  background-color: white;
 }
 
 .card ul {
