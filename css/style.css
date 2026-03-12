@@ -2,6 +2,40 @@
   box-sizing: border-box;
 }
 
+.install-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c3e50;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 10px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.install-banner button {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#install-btn {
+  background: #27ae60;
+  color: white;
+}
+
+#close-install {
+  background: transparent;
+  color: white;
+  font-size: 16px;
+}
+
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: #f3f6fb;

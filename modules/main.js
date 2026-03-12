@@ -7,6 +7,7 @@ let map;
 let editing = false;
 let input; //edit input
 const wikiCache = {};
+let savedCities = []; // cities speichern
 
 document.addEventListener("DOMContentLoaded", () => {
   showAttractionDetails(defaultPlace);
@@ -76,6 +77,16 @@ export async function searchCity(city) {
     const lat = Number(data[0].lat);
     const lon = Number(data[0].lon);
 
+    // infos speichern
+    const cityData = {
+      name: city,
+      lat,
+      lon,
+    };
+
+    savedCities.push(cityData);
+    await set("cities", savedCities);
+
     map.flyTo([lat, lon], 12, {
       animate: true,
       duration: 3,
@@ -91,6 +102,21 @@ export async function searchCity(city) {
   }
 }
 
+// load prevCities am Anfang
+export async function loadCities() {
+  const data = await get("cities");
+
+  if (data) {
+    savedCities = data;
+
+    savedCities.forEach((city) => {
+      L.marker([city.lat, city.lon]).addTo(map);
+      getAttractions(city.lat, city.lon);
+      getWeather(city.lat, city.lon);
+    });
+  }
+}
+
 // ATTRAKTIONEN LADEN
 async function getAttractions(lat, lon) {
   attractionsLayer.clearLayers();
@@ -102,7 +128,6 @@ async function getAttractions(lat, lon) {
 
   const categories = "building.historic,leisure.park,tourism.sights";
   const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lon},${lat},${radius}&limit=20&apiKey=${API_KEY}`;
-  console.log(url);
 
   try {
     const res = await fetch(url);
@@ -114,6 +139,7 @@ async function getAttractions(lat, lon) {
     }
 
     const data = await res.json();
+    await set(`attractions-${lat}-${lon}`, data.features);
 
     data.features.forEach((place) => {
       // GeoJSON Koordinaten sind [lon, lat]
@@ -141,7 +167,22 @@ async function getAttractions(lat, lon) {
       });
     });
   } catch (err) {
-    console.error("Netzwerkfehler:", err);
+    // console.error("Netzwerkfehler:", err);
+    const cached = await get(`attractions-${lat}-${lon}`);
+
+    if (cached) {
+      cached.forEach((place) => {
+        const [pLon, pLat] = place.geometry.coordinates;
+
+        const marker = L.marker([pLat, pLon])
+          .addTo(attractionsLayer)
+          .bindPopup(place.properties.name);
+
+        marker.on("click", () => {
+          showAttractionDetails(place);
+        });
+      });
+    }
   }
 }
 
@@ -232,6 +273,8 @@ async function getWeather(lat, lon) {
     const res = await fetch(url);
     const data = await res.json();
 
+    await set(`weather-${lat}-${lon}`, data);
+
     const city = data.city.name;
     const country = data.city.country;
 
@@ -239,7 +282,16 @@ async function getWeather(lat, lon) {
 
     updateWeatherUI({ city, country, forecast });
   } catch (error) {
-    console.error("Weather API error:", error);
+    const cachedWeather = await get(`weather-${lat}-${lon}`);
+
+    if (cachedWeather) {
+      const city = cachedWeather.city.name;
+      const country = cachedWeather.city.country;
+
+      const forecast = getDailyForecast(cachedWeather.list);
+
+      updateWeatherUI({ city, country, forecast });
+    }
   }
 }
 

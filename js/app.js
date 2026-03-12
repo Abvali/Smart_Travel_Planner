@@ -1,16 +1,19 @@
 import {
   addTodo,
   loadChecklist,
+  loadCities,
   loadTodos,
   renderChecklist,
   renderTodos,
   searchCity,
   showChecklistInput,
   showMap,
-} from "../module/main.js";
-import { el } from "../module/lib.js";
+} from "../modules/main.js";
+import { el } from "../modules/lib.js";
+import "../modules/install.js";
 
 showMap();
+loadCities();
 loadTodos();
 loadChecklist();
 renderTodos();
@@ -28,6 +31,15 @@ el("#search-btn").addEventListener("click", () => {
   const city = input.value;
   searchCity(city);
 });
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch((err) => console.log("SW error", err));
+  });
+}
 
 input.addEventListener("input", debounce(getCitySuggestions, 500));
 
