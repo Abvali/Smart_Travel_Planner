@@ -117,6 +117,20 @@ export async function loadCities() {
   }
 }
 
+// wenn offline ist,zeigt vorherige Städte
+export async function showSavedCities() {
+  const cities = await get("cities");
+
+  if (!cities) return;
+
+  cities.forEach((city) => {
+    L.marker([city.lat, city.lon]).addTo(map);
+
+    getAttractions(city.lat, city.lon);
+    getWeather(city.lat, city.lon);
+  });
+}
+
 // ATTRAKTIONEN LADEN
 async function getAttractions(lat, lon) {
   attractionsLayer.clearLayers();

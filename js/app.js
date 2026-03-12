@@ -28,6 +28,10 @@ const suggestions = el("#suggestions");
 const API_KEY = "618da3fb696e4cc89e1440c269d6577d";
 
 el("#search-btn").addEventListener("click", () => {
+  if (!navigator.onLine) {
+    alert("You are offline. Showing saved cities only.");
+    return;
+  }
   const city = input.value;
   searchCity(city);
 });
@@ -40,10 +44,17 @@ if ("serviceWorker" in navigator) {
       .catch((err) => console.log("SW error", err));
   });
 }
+window.addEventListener("offline", () => {
+  alert("Offline mode enabled");
+});
 
 input.addEventListener("input", debounce(getCitySuggestions, 500));
 
 async function getCitySuggestions() {
+  if (!navigator.onLine) {
+    suggestions.innerHTML = "<div class='suggestion'>Offline mode</div>";
+    return;
+  }
   const text = input.value;
 
   if (text.length < 2) {
