@@ -60,11 +60,13 @@ body {
   position: relative;
   display: inline-flex;
   gap: 10px;
+  width: 50%;
+  margin: auto;
 }
 
 .search input {
   padding: 10px 14px;
-  width: 320px;
+  width: 90%;
   max-width: 70vw;
   border-radius: 8px;
   border: none;
@@ -338,7 +340,7 @@ a:hover {
   }
 
   .search {
-    flex-direction: column;
+    width: 100%;
     align-items: center;
   }
 
