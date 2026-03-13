@@ -8,6 +8,7 @@ let editing = false;
 let input; //edit input
 const wikiCache = {};
 let savedCities = []; // cities speichern
+const cityLayer = L.layerGroup();
 
 document.addEventListener("DOMContentLoaded", () => {
   showAttractionDetails(defaultPlace);
@@ -55,6 +56,7 @@ export function showMap() {
   }).addTo(map);
 
   attractionsLayer.addTo(map);
+  cityLayer.addTo(map);
 
   // default weather: Paris
   getWeather(48.8566, 2.3522);
@@ -62,6 +64,8 @@ export function showMap() {
 
 // STADT SUCHEN
 export async function searchCity(city) {
+  cityLayer.clearLayers();
+  attractionsLayer.clearLayers();
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${city}`,
@@ -84,8 +88,12 @@ export async function searchCity(city) {
       lon,
     };
 
-    savedCities.push(cityData);
-    await set("cities", savedCities);
+    const exists = savedCities.some((c) => c.lat === lat && c.lon === lon);
+
+    if (!exists) {
+      savedCities.push(cityData);
+      await set("cities", savedCities);
+    }
 
     map.flyTo([lat, lon], 12, {
       animate: true,
@@ -94,7 +102,7 @@ export async function searchCity(city) {
 
     getWeather(lat, lon);
 
-    L.marker([lat, lon], { icon: defaultIcon }).addTo(map);
+    L.marker([lat, lon], { icon: defaultIcon }).addTo(cityLayer);
 
     getAttractions(lat, lon);
   } catch (err) {
@@ -110,9 +118,9 @@ export async function loadCities() {
     savedCities = data;
 
     savedCities.forEach((city) => {
-      L.marker([city.lat, city.lon]).addTo(map);
-      getAttractions(city.lat, city.lon);
-      getWeather(city.lat, city.lon);
+      L.marker([city.lat, city.lon], { icon: defaultIcon }).addTo(cityLayer);
+      // getAttractions(city.lat, city.lon);
+      // getWeather(city.lat, city.lon);
     });
   }
 }
@@ -122,9 +130,10 @@ export async function showSavedCities() {
   const cities = await get("cities");
 
   if (!cities) return;
+  cityLayer.clearLayers();
 
   cities.forEach((city) => {
-    L.marker([city.lat, city.lon]).addTo(map);
+    L.marker([city.lat, city.lon]).addTo(cityLayer);
 
     getAttractions(city.lat, city.lon);
     getWeather(city.lat, city.lon);
